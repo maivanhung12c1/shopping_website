@@ -1,11 +1,12 @@
 import { useAuthStore } from "../store/auth";
 import axios from "axios";
-import { jwt_decode } from 'jwt-decode'
-import Cookies from 'js-cookie'
+import { jwtDecode } from "jwt-decode";
+import Cookies from 'js-cookie';
+import apiInstance from "./axios";
 
 export const login = async (email, password) => {
     try {
-        const { data, status } = await axios.post("user/token/", {
+        const { data, status } = await apiInstance.post("user/token/", {
             email,
             password
         })
@@ -25,7 +26,7 @@ export const login = async (email, password) => {
 
 export const register = async (full_name, email, phone, password, password2) => {
     try {
-        const { data } = await axios.post('user/register/', {
+        const { data } = await apiInstance.post('user/register/', {
             full_name,
             email,
             phone,
@@ -48,8 +49,8 @@ export const register = async (full_name, email, phone, password, password2) => 
 }
 
 export const logout = () => {
-    Cookie.remove("access_token");
-    Cookie.remove("refresh_token");
+    Cookies.remove("access_token");
+    Cookies.remove("refresh_token");
     useAuthStore.getState().setUser(null)
 }
 
@@ -79,7 +80,7 @@ export const setAuthUser = (access_token, refresh_token) => {
         secure: true
     })
 
-    const user = jwt_decode(access_token) ?? null
+    const user = jwtDecode(access_token) ?? null
 
     if (user) {
         useAuthStore.getState().setUser(user)
@@ -89,7 +90,7 @@ export const setAuthUser = (access_token, refresh_token) => {
 
 export const getRefreshToken = async () => {
     const refresh_token = Cookies.get("refresh_token")
-    const response = await axios.post('user/token/refresh/', {
+    const response = await apiInstance.post('user/token/refresh/', {
         refresh: refresh_token
     })
 
@@ -98,7 +99,7 @@ export const getRefreshToken = async () => {
 
 export const isAccessTokenExpired = (accessToken) => {
     try {
-        const decodedToken = jwt_decode(accessToken)
+        const decodedToken = jwtDecode(accessToken)
         return decodedToken.exp < Date.now() / 100
     } catch (error) {
         console.log(error)
