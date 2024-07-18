@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'vendor',
     'customer',
     'api',
+    'addon',
 
     # Third Party Apps
     'rest_framework',
