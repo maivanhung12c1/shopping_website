@@ -1,25 +1,90 @@
 from django.shortcuts import render
-from userauths.models import User, Profile
-from userauths.serializer import MyTokenObtainPairSerializer, RegisterSerializer, UserSerializer
+from django.http import JsonResponse
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.conf import settings
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+
+# Restframework
+from rest_framework import status
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+
+
+# Others
+import json
 import random
-import shortuuid
-from django.template.loader import render_to_string
-from django.core.mail import EmailMultiAlternatives
-from django.conf import settings
-from rest_framework import status
+
+# Serializers
+from userauths.serializer import MyTokenObtainPairSerializer, RegisterSerializer, UserSerializer, ProfileSerilizer
+
+# Models
+from userauths.models import Profile, User
+
 
 class MyTokenObtainPairView(TokenObtainPairView):
+    # Here, it specifies the serializer class to be used with this view
     serializer_class = MyTokenObtainPairSerializer
 
 class RegisterView(generics.CreateAPIView):
+    # It sets the queryset for this view to retrieve all User objects
     queryset = User.objects.all()
+    # It specifies that the view allows any user (no authentication required)
     permission_classes = (AllowAny, )
+    # It sets the serilizer class to be used with this view
     serializer_class = RegisterSerializer
+
+@api_view(['GET'])
+def getRoutes(request):
+    # It defines a list of API routes that can be accessed
+    routes = [
+        "/api/token/",
+        "/api/register/",
+        "/api/token/refresh/",
+        "/api/test/"
+    ]
+
+    # It returns a DRF Response object containing the list of routes.
+    return Response(routes)
+
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+def testEndPoint(request):
+    if request.method == 'GET':
+        data = f"Congratulations {request.user}, your API just reponded to a GET request."
+        return Response({'response': data}, status=status.HTTP_200_OK)
+    elif request.method == 'POST':
+        try:
+            # Decode the request body from UTF-8 and load it as JSON
+            body = request.body.decode('utf-8')
+            data = json.loads(body)
+
+            if 'text' not in data:
+                return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
+            text = data.get('text')
+            data = f"Congratulations, your API just responded to a POST request with text: {text}"
+            return Response({'response': data}, status=status.HTTP_200_OK)
+        except json.JSONDecodeError:
+            # If there's an error decoding the JSON data, it return a response with an error message and an HTTP 400
+            return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
+    # If the request method is neither GET or POST, it return a response with an error message and an HTTP 400
+    return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
+
+class ProfileView(generics.RetrieveAPIView):
+    permission_classes = (AllowAny,)
+    serializer_class = ProfileSerilizer
+
+    def get_object(self):
+        user_id = self.kwargs['user_id']
+        user = User.objects.get(id=user_id)
+        profile = Profile.objects.get(user=user)
+        return profile
 
 def generate_numeric_otp(length=7):
         # Generate a random 7-digit OTP
@@ -89,7 +154,6 @@ class PasswordChangeView(generics.CreateAPIView):
             user.reset_token = ""
             user.save()
  
-            
             return Response( {"message": "Password Changed Successfully"}, status=status.HTTP_201_CREATED)
         else:
             return Response( {"message": "An Error Occured"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
