@@ -17,6 +17,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework import generics, status
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
+import stripe.error
 
 # Serializers
 from store.serializers import CartSerializer, ProductSerializer, CategorySerializer, CartOrderSerializer, BrandSerializer, ReviewSerializer, ConfigSettingsSerializer
@@ -42,6 +43,9 @@ def send_notification(user=None, vendor=None, order=None, order_item=None):
         order=order,
         order_item=order_item,
     )
+
+def get_access_token(client_id, secret_key):
+    pass
 
 class ConfigSettingsDetailView(generics.RetrieveAPIView):
     serializer_class = ConfigSettingsSerializer
@@ -354,7 +358,6 @@ class CreateOrderView(generics.CreateAPIView):
 
         return Response({'message': 'Order created susscessfully', 'order_id': order.oid}, status=status.HTTP_201_CREATED)
     
-
 class CheckoutView(generics.RetrieveAPIView):
     serializer_class = CartOrderSerializer
     lookup_field = 'order_oid'
@@ -363,4 +366,160 @@ class CheckoutView(generics.RetrieveAPIView):
         order_oid = self.kwargs['order_oid']
         cart = get_list_or_404(CartOrder, oid=order_oid)
         return cart
+    
+class CouponApiView(generics.CreateAPIView):
+    serializer_class = CartOrderSerializer
+
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+
+        order_oid = payload['order_id']
+        coupon_code = payload['coupon_code']
+
+        order = CartOrder.objects.get(oid=order_oid)
+        coupon = Coupon.objects.filter(code__iexact=coupon_code, active=True).first()
+        if coupon:
+            order_items = CartOrderItem.objects.filter(order=order, vendor=coupon.vendor)
+            if order_items:
+                for i in order_items:
+                    if not coupon in i.coupon.all():
+                        discount = i.total * coupon.discount / 100
+                        i.total -= discount
+                        i.sub_total -= discount
+                        i.coupon.add(coupon)
+                        i.saved += discount
+                        i.applied_coupon = True
+
+                        order.total -= discount
+                        order.sub_total -= discount
+                        order.saved += discount
+
+                        i.save()
+                        order.save()
+                        return Response({'message': 'Coupon Activated'}, status=status.HTTP_200_OK)
+                    else:
+                        return Response({'message': 'Coupon Already Activated'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Order Item Does Not Exists'}, status=status.HTTP_200_OK)
+        else:
+            return Response({'message': 'Coupon Does Not Exists'}, status=status.HTTP_404_NOT_FOUND)
+
+class StripeCheckoutView(generics.CreateAPIView):
+    serializer_class = CartOrderSerializer
+
+    def create(self, request, *args, **kwargs):
+        order_oid = self.kwargs['order_oid']
+        order = CartOrder.objects.filter(oid=order_oid).first()
+
+        if not order:
+            return Response({'error': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        try:
+            checkout_session = stripe.checkout.Session.create(
+                customer_email=order.email,
+                payment_method_types=['card'],
+                line_items=[
+                    {
+                        'price_data': {
+                            'currency': 'usd',
+                            'product_data': {
+                                'name': order.full_name,
+                            },
+                            'unit_amount': int(order.total * 100),
+                        },
+                        'quantity': 1,
+                    }
+                ],
+                mode='payment',
+                success_url=settings.SITE_URL + '/payment-success/' + order.oid + '?session_id={CHECKOUT_SESSION_ID}',
+                canceel_url = settings.SITE_URL + '/?session_id={CHECKOUT_SESSION_ID}',
+            )
+            order.stripe_session_id = checkout_session.id
+            order.save()
+
+            return redirect(checkout_session.url)
+        
+        except stripe.error.StripeError as e:
+            return Response({'error': f'Something went wrong when creating stripe checkout session: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+class PaymentSuccessView(generics.CreateAPIView):
+    serializer_class = CartOrderSerializer
+    queryset = CartOrder.objects.all()
+
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+
+        order_oid = payload['order_oid']
+        session_id = payload['session_id']
+        paypal_order_id = payload['paypal_order_id']
+
+        order = CartOrder.objects.get(oid=order_oid)
+        order_items = CartOrderItem.objects.filter(order=order)
+
+        if paypal_order_id != 'null':
+            pass
+
+        if session_id != 'null':
+            session = stripe.checkout.Session.retrieve(session_id)
+
+            if session.payment_status == 'paid':
+                if order.payment_status == 'processing':
+                    order.payment_status = 'paid'
+                    order.save()
+
+                    if order.buyer != None:
+                        send_notification(user=order.buyer, order=order)
+                    for o in order_items:
+                        send_notification(vendor=o.vendor, order=order, order_item=o)
+                    
+                    return Response({'message': 'Payment Successfull'}, status=status.HTTP_201_CREATED)
+                else:
+                    return Response({'message': 'Already Paid'}, status=status.HTTP_201_CREATED)
+            elif order.payment_status == 'unpaid':
+                return Response({'message': 'unpaid!'}, status=status.HTTP_402_PAYMENT_REQUIRED)
+            elif session.payment_status == 'cancelled':
+                return Response({'message': 'cancelled!'}, status=status.HTTP_403_FORBIDDEN)
+            else:
+                return Response({'message': 'An Error Occured!'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            session = None
+
+class ReviewRatingAPIView(generics.CreateAPIView):
+    serializer_class = ReviewSerializer
+    queryset = Review.objects.all()
+    permission_classes = (AllowAny,)
+
+    def create(self, request, *args, **kwargs):
+        payload = request.data
+
+        user_id = payload['user_id']
+        product_id = payload['product_id']
+        rating = payload['rating']
+        review = payload['review']
+
+        user = User.objects.get(id=user_id)
+        product = Product.objects.get(id=product_id)
+
+        Review.objects.create(user=user, product=product_id, rating=rating, review=review)
+        return Response({'message': 'Review Created Successfully.'}, status=status.HTTP_201_CREATED)
+    
+class ReviewListView(generics.ListAPIView):
+    serializer_class = ReviewSerializer
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        product_id = self.kwargs['product_id']
+
+        product = Product.objects.get(id=product_id)
+        reviews = Review.objects.filter(product=product)
+        return reviews
+
+class SearchProductsAPIView(generics.ListAPIView):
+    serializer_class = ProductSerializer
+    permission_classes = (AllowAny,)
+
+    def get_queryset(self):
+        query = self.request.GET.get('query')
+
+        products = Product.objects.filter(status='published', title__icontains=query)
+        return products
     
