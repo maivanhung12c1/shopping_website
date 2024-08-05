@@ -80,7 +80,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class ProfileSerilizer(serializers.ModelSerializer):
 
-    class Profile:
+    class Meta:
         model = Profile
         fields = '__all__'
 

@@ -49,14 +49,14 @@ export const register = async (full_name, email, phone, password, password2) => 
 }
 
 export const logout = () => {
-    Cookies.remove("access_token");
-    Cookies.remove("refresh_token");
+    Cookies.remove("accessToken");
+    Cookies.remove("refreshToken");
     useAuthStore.getState().setUser(null)
 }
 
 export const setUser = async () => {
-    const accessToken = Cookies.get("access_token")
-    const refreshToken = Cookies.get("refresh_token")
+    const accessToken = Cookies.get("accessToken")
+    const refreshToken = Cookies.get("refreshToken")
 
     if (!accessToken || !refreshToken) {
         return;
@@ -70,17 +70,17 @@ export const setUser = async () => {
     }
 }
 
-export const setAuthUser = (access_token, refresh_token) => {
-    Cookies.set('access_token', access_token, {
+export const setAuthUser = (accessToken, refreshToken) => {
+    Cookies.set('accessToken', accessToken, {
         expires: 1,
         secure: true
     })
-    Cookies.set('refresh_token', access_token, {
+    Cookies.set('refreshToken', accessToken, {
         expires: 7,
         secure: true
     })
 
-    const user = jwtDecode(access_token) ?? null
+    const user = jwtDecode(accessToken) ?? null
 
     if (user) {
         useAuthStore.getState().setUser(user)
@@ -89,9 +89,9 @@ export const setAuthUser = (access_token, refresh_token) => {
 }
 
 export const getRefreshToken = async () => {
-    const refresh_token = Cookies.get("refresh_token")
+    const refreshToken = Cookies.get("refreshToken")
     const response = await apiInstance.post('user/token/refresh/', {
-        refresh: refresh_token
+        refresh: refreshToken
     })
 
     return response.data

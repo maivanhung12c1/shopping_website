@@ -220,3 +220,7 @@ JAZZMIN_SETTINGS = {
     'show_sidebar': True,
     'show_ui_builder': True,
 }
+
+JAZZMIN_UI_TWEAKS = {
+    "theme": "lux",
+}

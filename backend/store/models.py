@@ -349,11 +349,12 @@ class Cart(models.Model):
     country = models.CharField(max_length=100, null=True, blank=True)
     size = models.CharField(max_length=100, null=True, blank=True)
     color = models.CharField(max_length=100, null=True, blank=True)
-    card_id = models.CharField(max_length=1000, null=True, blank=True)
+    cart_id = models.CharField(max_length=1000, null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
+    total = models.DecimalField(decimal_places=2, max_digits=12, default=0.00, null=True, blank=True)
 
     def __str__(self) -> str:
-        return f"{self.card_id} - {self.product.title}"
+        return f"{self.cart_id} - {self.product.title}"
     
 
 # Model for Cart Orders
@@ -362,6 +363,8 @@ class CartOrder(models.Model):
     buyer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name="buyer", blank=True)
     sub_total = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
     shipping_amount = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
+    # VAT (Value Added Tax) cost
+    tax_fee = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
     service_fee = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
     total = models.DecimalField(default=0.00, max_digits=12, decimal_places=2)
 

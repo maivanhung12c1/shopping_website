@@ -7,7 +7,7 @@ from vendor import views as vendor_views
 from rest_framework_simplejwt.views import TokenRefreshView
 
 urlpatterns = [
-    path('', userauths_views.getRoutes()),
+    path('', userauths_views.getRoutes),
 
     # Userauths API Endpoints
     path('user/token/', userauths_views.MyTokenObtainPairView.as_view(), name='token_obtain_pair'),

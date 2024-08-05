@@ -499,7 +499,7 @@ class ReviewRatingAPIView(generics.CreateAPIView):
         user = User.objects.get(id=user_id)
         product = Product.objects.get(id=product_id)
 
-        Review.objects.create(user=user, product=product_id, rating=rating, review=review)
+        Review.objects.create(user=user, product=product, rating=rating, review=review)
         return Response({'message': 'Review Created Successfully.'}, status=status.HTTP_201_CREATED)
     
 class ReviewListView(generics.ListAPIView):

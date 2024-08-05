@@ -96,7 +96,7 @@ class ProductSerializer(serializers.ModelSerializer):
         ]
     
     def __init__(self, instance=None, data=..., **kwargs):
-        super(ProductSerializer).__init__(instance, data, **kwargs)
+        super(ProductSerializer, self).__init__(instance, data, **kwargs)
         # Customise serialization depth based on the request method.
         request = self.context.get('request')
         if request and request.method == 'POST':
@@ -114,7 +114,7 @@ class ProductFaqSerializer(serializers.ModelSerializer):
         fields = '__all__'
     
     def __init__(self, instance=None, data=..., **kwargs):
-        super(ProductFaqSerializer).__init__(instance, data, **kwargs)
+        super(ProductFaqSerializer, self).__init__(instance, data, **kwargs)
         request = self.context.get('request')
         if request and request.method == 'POST':
             # When creating a new product FAQ, set serialization depth to 0
@@ -130,7 +130,7 @@ class CartSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def __init__(self, instance=None, data=..., **kwargs):
-        super().__init__(instance, data, **kwargs)
+        super(CartSerializer, self).__init__(instance, data, **kwargs)
         request = self.context.get('request')
         if request and request.method == 'POST':
             # When creating a new cart order item, set serialization depth to 0.
@@ -146,7 +146,7 @@ class CartOrderItemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def __init__(self, instance=None, data=..., **kwargs):
-        super(CartOrderItemSerializer).__init__(instance, data, **kwargs)
+        super(CartOrderItemSerializer, self).__init__(instance, data, **kwargs)
         request = self.context.get('request')
         if request and request.method == 'POST':
             # When creating a new cart order item, set serialization depth to 0.
@@ -162,7 +162,7 @@ class CartOrderSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def __init__(self, instance=None, data=..., **kwargs):
-        super(CartOrderSerializer).__init__(instance, data, **kwargs)
+        super(CartOrderSerializer, self).__init__(instance, data, **kwargs)
         request = self.context.get('request')
         if request and request.method == 'POST':
             # When creating a new cart order, set serialization depth to 0.
@@ -178,7 +178,7 @@ class VendorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def __init__(self, instance=None, data=..., **kwargs):
-        super(VendorSerializer).__init__(instance, data, **kwargs)
+        super(VendorSerializer, self).__init__(instance, data, **kwargs)
         request = self.context.get('request')
         if request and request.method == 'POST':
             # When creating a new vendor, set serialization depth to 0.
@@ -195,7 +195,7 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def __init__(self, instance=None, data=..., **kwargs):
-        super(ReviewSerializer).__init__(instance, data, **kwargs)
+        super(ReviewSerializer, self).__init__(instance, data, **kwargs)
         request = self.context.get('request')
         if request and request.method == 'POST':
             # When creating a new review, set serialization depth to 0.
@@ -211,7 +211,7 @@ class WishlistSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def __init__(self, instance=None, data=..., **kwargs):
-        super(WishlistSerializer).__init__(instance, data, **kwargs)
+        super(WishlistSerializer, self).__init__(instance, data, **kwargs)
         request = self.context.get('request')
         if request and request.method == 'POST':
             # When creating a new wishlist, set serialization depth to 0.
@@ -226,7 +226,7 @@ class AddressSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def __init__(self, instance=None, data=..., **kwargs):
-        super(AddressSerializer).__init__(instance, data, **kwargs)
+        super(AddressSerializer, self).__init__(instance, data, **kwargs)
         request = self.context.get('request')
         if request and request.method == 'POST':
             # When creating a new address, set serialization depth to 0.
@@ -241,7 +241,7 @@ class CancelledOrderSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def __init__(self, instance=None, data=..., **kwargs):
-        super(CancelledOrderSerializer).__init__(instance, data, **kwargs)
+        super(CancelledOrderSerializer, self).__init__(instance, data, **kwargs)
         request = self.context.get('request')
         if request and request.method == 'POST':
             # When creating a new cancelled order, set serialization depth to 0.
@@ -256,7 +256,7 @@ class CouponSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def __init__(self, instance=None, data=..., **kwargs):
-        super(CouponSerializer).__init__(instance, data, **kwargs)
+        super(CouponSerializer, self).__init__(instance, data, **kwargs)
         request = self.context.get('request')
         if request and request.method == 'POST':
             # When creating a new coupon, set serialization depth to 0.
@@ -271,7 +271,7 @@ class CouponUsersSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def __init__(self, instance=None, data=..., **kwargs):
-        super(CouponUsersSerializer).__init__(instance, data, **kwargs)
+        super(CouponUsersSerializer, self).__init__(instance, data, **kwargs)
         request = self.context.get('request')
         if request and request.method == 'POST':
             # When creating a new coupon user, set serialization depth to 0.
@@ -292,7 +292,7 @@ class NotificationSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def __init__(self, instance=None, data=..., **kwargs):
-        super(NotificationSerializer).__init__(instance, data, **kwargs)
+        super(NotificationSerializer, self).__init__(instance, data, **kwargs)
         request = self.context.get('request')
         if request and request.method == 'POST':
             # When creating a new coupon user, set serialization depth to 0.
