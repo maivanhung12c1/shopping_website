@@ -3,6 +3,15 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 import Cookies from 'js-cookie';
 import apiInstance from "./axios";
+import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+    toast: true,
+    position: 'top-end',
+    showConfirmButton: false,
+    timer: 1000,
+    timerProgressBar: true,
+});
 
 export const login = async (email, password) => {
     try {
@@ -37,13 +46,18 @@ export const register = async (full_name, email, phone, password, password2) => 
         await login(email, password)
 
         // Alert - Signed up Successfully
+        Swal.fire({
+            icon: "success",
+            title: "Yeahhh",
+            text: 'Bạn đã đăng ký thành công',
+        });
 
         return { data, error: null }
+
     } catch (error) {
-        console.log(error);
         return {
             data: null,
-            error: error.reponse.data?.detail || 'Something went wrong'
+            error: error.response.data || 'Something went wrong'
         };
     }
 }
