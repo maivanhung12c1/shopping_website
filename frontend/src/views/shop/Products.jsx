@@ -200,6 +200,145 @@ function Products() {
                                                 </div>
                                                 <div className='card-body'>
                                                     <h6 className=''>By: <Link to={`/vendor/${product?.vendor?.slug}`}>{product.vendor.name}</Link></h6>
+                                                    <Link to={`/detail/${product.slug}`} className='text-reset'><h5 className='card-title mb-3'>{product.title.slice(0, 30)}...</h5></Link>
+                                                    <Link to={`/`} className='text-reset'><p>{product?.brand.title}</p></Link>
+                                                    <h6 className='mb-1'>${product.price}</h6>
+                                                    {((product.color && product.color.length > 0) || (product.size && product.size.length > 0)) ? (
+                                                        <div className='btn-group'>
+                                                            <button className='btn btn-primary dropdown-toggle' type='button' id='dropdownMenuClickable' data-bs-toggle='dropdown' data-bs-auto-close='false' aria-expanded='false'>
+                                                                Variation
+                                                            </button>
+                                                            <ul className='dropdown-menu' style={{ maxWidth: '400px' }} aria-labelledby='dropdownMenuClickable'>
+                                                                {/* Qauntity */}
+                                                                <div className='d-flex flex-column mb-2 mt-2 p-1'>
+                                                                    <div className='p-1 mt-0 pt-0 d-flex flex-wrap'>
+                                                                        <>
+                                                                            <li>
+                                                                                <input
+                                                                                    type='number'
+                                                                                    className='form-control'
+                                                                                    placeholder='Số lượng'
+                                                                                    onChange={(e) => handleQtyChange(e, product_id)}
+                                                                                    min={1}
+                                                                                    defaultValue={1}
+                                                                                />
+                                                                            </li>
+                                                                        </>
+
+                                                                    </div>
+
+                                                                </div>
+                                                                {/* Size */}
+                                                                {product?.size && product?.size.length > 0 && (
+                                                                    <div className='d-flex flex-column'>
+                                                                        <li className='p-1'><b>Size</b>: {selectedSize[product_id] || 'Chọn Size'}
+
+                                                                        </li>
+                                                                        <div className='p-1 mt-0 pt-0 d-flex flex-wrap'>
+                                                                            {product?.size.map((size, index) => (
+                                                                                <>
+                                                                                    <li key={index}>
+                                                                                        <button
+                                                                                            className='btn btn-secondary btn-sm me-2 mb-1'
+                                                                                            onClick={(e) => handleSizeButtonClick(e, product.id, size.name)}
+                                                                                        >
+                                                                                            {size.name}
+                                                                                        </button>
+
+                                                                                    </li>
+                                                                                </>
+                                                                            ))}
+
+                                                                        </div>
+
+                                                                    </div>
+                                                                )}
+
+                                                                {/* Corlor */}
+                                                                {product.color && product.color.length > 0 && (
+                                                                    <div className='d-flex flex-column mt-3'>
+                                                                        <li className='p-1 color_name_div'><b>Màu sắc</b>: {selectedColors[product.id] || 'Chọn màu sắc'}</li>
+                                                                        <div className='p-1 mt-0 pt-0 d-flex flex-wrap'>
+                                                                            {product?.color?.map((color, index) => (
+                                                                                <>
+                                                                                    <input type='hidden' className={`color_name${color.id}`} name='' id=''/>
+                                                                                    <li key={index}>
+                                                                                        <button
+                                                                                            key={color.id}
+                                                                                            className='color-button btn p-3 me-2'
+                                                                                            style={{ backgroundColor: color.color_code }}
+                                                                                            onClick={(e) => handleColorButtonClick(e, product.id, color.name, cololr.image)}
+                                                                                        >
+                                                                                        </button>
+                                                                                    </li>
+                                                                                </>
+                                                                            ))}
+                                                                        </div>
+
+                                                                    </div>
+                                                                )}
+
+                                                                {/* Add To Cart */}
+                                                                <div className='d-flex mt-3 p-1 w-100'>
+                                                                    <button
+                                                                        onClick={() => handleAddToCart(product.id, product.price, product.shipping_amount)}
+                                                                        disabled={loadingStates[product.id] === 'Đang thêm vào giỏ hàng ...'}
+                                                                        type='button'
+                                                                        className='btn btn-primary me-1 mb-1'
+                                                                    >
+                                                                        {loadingStates[product.id] === 'Đã thêm vào giỏ hàng'} ? (
+                                                                            <>
+                                                                                Đã thêm vào giỏ hàng <FaCheckCircle />
+                                                                            </>
+                                                                        ) : loadingStates[product.id] === 'Đang thêm vào giỏ hàng ...' ? (
+                                                                            <>
+                                                                                Đang thêm vào giỏ hàng <FaSpinner className='fas fa-spin'/>
+                                                                            </>
+                                                                        ) : (
+                                                                            <>
+                                                                                {loadingStates[product.id] || 'Thêm vào giỏ hàng'} <FaShoppingCart />
+                                                                            </>
+                                                                        )
+
+                                                                    </button>
+
+                                                                </div>
+
+                                                            </ul>
+                                                        </div>
+                                                    ) : (
+                                                        <button
+                                                            onClick={() => handleAddToCart(product.id, product.price, product.shipping_amount)}
+                                                            disabled={loadingStates[product.id] === 'Đang thêm vào giỏ hàng ...'}
+                                                            type='button'
+                                                            className='btn btn-primary me-1 mb-1'
+                                                        >
+                                                            {loadingStates[product.id] === 'Đã thêm vào giỏ hàng'} ? (
+                                                                <>
+                                                                    Đã thêm vào giỏ hàng <FaCheckCircle />
+                                                                </>
+                                                            ) : loadingStates[product.id] === 'Đang thêm vào giỏ hàng ...' ? (
+                                                                <>
+                                                                    Đang thêm vào giỏ hàng <FaSpinner className='fas fa-spin'/>
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    {loadingStates[product.id] || 'Thêm vào giỏ hàng'} <FaShoppingCart />
+                                                                </>
+                                                            )
+                                                        </button>
+                                                    )}
+
+                                                    {/* Wishlish Button */}
+                                                    <button
+                                                        onClick={() => handleAddToWishList(product.id)}
+                                                        type='button'
+                                                        className='btn btn-danger px-3 ms-2'
+                                                    >
+                                                        <i className='fas fa-heart' />
+
+                                                    </button>
+
                                                 </div>
                                             </div>
 
