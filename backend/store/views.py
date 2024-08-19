@@ -67,7 +67,7 @@ class BrandListView(generics.ListAPIView):
 
 class FeaturedProductListView(generics.ListAPIView):
     serializer_class = ProductSerializer
-    queryset = Product.objects.filter(status="published")
+    queryset = Product.objects.filter(status="published", featured=True)[:3]
     permission_classes = (AllowAny,)
 
 class ProductListView(generics.ListAPIView):

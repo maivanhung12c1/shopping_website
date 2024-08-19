@@ -280,7 +280,8 @@ class Product(models.Model):
             self.stock_qty = 0
             self.in_stock = False
 
-        self.rating = self.product_rating()
+        self.rating = 5
+        
         super(Product, self).save(*args, **kwargs)
 
 # Model for Product Gallery

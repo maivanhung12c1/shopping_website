@@ -6,9 +6,9 @@ import apiInstance from '../../utils/axios';
 import Addon from '../plugin/Addon';
 import GetCurrentAddress from '../plugin/UserCountry';
 import UserData from '../plugin/UserData';
-import CartID from '../plugin/cartID';
-import { AddToCart } from '../plugin/addToCart';
-import { AddToWishList } from '../plugin/addToWishList';
+import CartID from '../plugin/CartID';
+import { AddToCart } from '../plugin/AddToCart';
+import { AddToWishList } from '../plugin/AddToWishList';
 import { CartContext } from '../plugin/Context';
 
 
@@ -286,7 +286,7 @@ function Products() {
                                                                         type='button'
                                                                         className='btn btn-primary me-1 mb-1'
                                                                     >
-                                                                        {loadingStates[product.id] === 'Đã thêm vào giỏ hàng'} ? (
+                                                                        {loadingStates[product.id] === 'Đã thêm vào giỏ hàng' ? (
                                                                             <>
                                                                                 Đã thêm vào giỏ hàng <FaCheckCircle />
                                                                             </>
@@ -298,7 +298,7 @@ function Products() {
                                                                             <>
                                                                                 {loadingStates[product.id] || 'Thêm vào giỏ hàng'} <FaShoppingCart />
                                                                             </>
-                                                                        )
+                                                                        )}
 
                                                                     </button>
 
@@ -313,7 +313,7 @@ function Products() {
                                                             type='button'
                                                             className='btn btn-primary me-1 mb-1'
                                                         >
-                                                            {loadingStates[product.id] === 'Đã thêm vào giỏ hàng'} ? (
+                                                            {loadingStates[product.id] === 'Đã thêm vào giỏ hàng' ? (
                                                                 <>
                                                                     Đã thêm vào giỏ hàng <FaCheckCircle />
                                                                 </>
@@ -325,7 +325,7 @@ function Products() {
                                                                 <>
                                                                     {loadingStates[product.id] || 'Thêm vào giỏ hàng'} <FaShoppingCart />
                                                                 </>
-                                                            )
+                                                            )}
                                                         </button>
                                                     )}
 
@@ -346,8 +346,135 @@ function Products() {
                                     ))}
                                 </div>
                             </section>
+                            <nav className='d-flex gap-1 pt-2'>
+                                <ul className='pagination'>
+                                    <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                                        <button className='page-link' onClick={() => setCurrentPage(currentPage - 1)}>
+                                            <i className='ci-arrow-left me-2' />
+                                            Trước
+                                        </button>
+
+                                    </li>
+
+                                </ul>
+                                <ul className='pagination'>
+                                    {pageNumbers.map((number) => (
+
+                                        <li key= {number} className={`page-item ${currentPage === number ? 'active' : ''}`}>
+                                            <button className='page-link' onClick={() => setCurrentPage(number)}>
+                                                {number}
+                                            </button>
+
+                                        </li>
+                                    ))}
+
+                                </ul>
+                                <ul className='pagination'>
+                                    <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                                        <button className='page-link' onClick={() => setCurrentPage(currentPage + 1)}>
+                                            Sau
+                                            <i className='ci-arrow-right ms-3' />
+                                        </button>
+
+                                    </li>
+
+                                </ul>
+
+                            </nav>
+                            <div>
+                                <div className='d-blfock mt-5' aria-label='Page navigation'>
+                                    <span className='fa-sm text-muted me-md-3'>Trang <b>{currentPage}</b> / <b>{totalPages}</b></span>
+                                </div>
+                                {
+                                    totalPages !==1 &&
+                                    <div>
+                                        <span className='fa-sm text-muted me-md-3'>Showing <b>itemsPerPage</b> of <b>{products?.length}</b> records</span>
+                                    </div>
+                                }
+                            </div>
                         </div>
                     </main>
+                    <main>
+                        <section className='text-center container'>
+                            <div className='row mt-4 mb-3'>
+                                <div className='col-lg-6 col-md-8 mx-auto'>
+                                    <h1 className='fw-light'>
+                                        Thể loại
+                                    </h1>
+                                    <p className='lead text-muted'>Thể loại của chúng tôi</p>
+
+                                </div>
+
+                            </div>
+                        </section>
+                        <div className='d-flex justify-content-center'>
+                            {category.map((c, index) => (
+                                <div>
+                                    <img 
+                                        src={c.image}
+                                        alt=''
+                                        style={{ width: '80px', height: '80px', objectFit: 'cover' }}
+                                    />
+                                    <p><a href='' className='text-dark'>{c.title}</a></p>
+                                </div>
+                            ))}
+
+                        </div>
+                        <section className='text-center container mt-5'>
+                            <div className='row py-lg-5'>
+                                <div className='col-lg-6 col-md-8 mx-auto'>
+                                    <h1 className='fw-light'>Trending</h1>
+                                    <p className='lead text-muted'></p>
+                                </div>
+                            </div>
+
+                        </section>
+                        <div className='album py-5 bg-light'>
+                            <div className='container'>
+                                <div className='row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3'>
+                                    {featuredProducts.map((product, index) => (
+                                        <div className='col-lg-4 col-md-12 mb-4' key={index.id}>
+                                            <div className='card'>
+                                                <div className='bg-image hover-zoom ripple' data-mdb-ripple-color='light'>
+                                                    <img 
+                                                        src={product.image}
+                                                        className='w-100'
+                                                        style={{ widows: '100px', height: '300px', objectFit: 'cover' }}
+                                                    />
+                                                </div>
+                                                <div className='card-body'>
+                                                    <a href='' className='text-reset'>
+                                                        <h5 className='card-title mb-3'>{product.title.slice(0, 30)}...</h5>
+
+                                                    </a>
+                                                    <a href="" className='text-reset'>
+                                                        <p>{product?.brand.title}</p>
+                                                    </a>
+                                                    <h6 className='mb-3'>{addon.currency_sign}{product.price}</h6>
+                                                    <button type='button' className='btn btn-primary me-1 mb-1'>
+                                                        Thêm vào giỏ hàng
+                                                    </button>
+                                                    <button type='button' className='btn btn-danger px-3 me-1 mb-1'>
+                                                        <i className='fas fa-heart' />
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    ))}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </main>
+                </div>
+            }
+            {
+                loading === true &&
+                <div className='container text-center'>
+                    <img className='' src='https://cdn.dribbble.com/users/2046015/screenshots/5973727/06-loader_telega.gif' alt=''/>
                 </div>
             }
         </>
@@ -355,3 +482,5 @@ function Products() {
 
 
 };
+
+export default Products;

@@ -18,11 +18,14 @@ urlpatterns = [
     path('user/password-reset/<email>/', userauths_views.PasswordEmailVerify.as_view(), name='password-reset'),
     path('user/password-change/', userauths_views.PasswordChangeView.as_view(), name='password-reset'),
 
+    # Adoon Endpoint
+    path('addon/', store_views.ConfigSettingsDetailView.as_view(), name='addon'),
+
     # Store API Endpoints
     path('category/', store_views.CategoryListView.as_view(), name='category'),
     path('brand/', store_views.BrandListView.as_view(), name='brand'),
     path('products/', store_views.ProductListView.as_view(), name='products'),
-    path('featured-products', store_views.FeaturedProductListView.as_view(), name='featured-products'),
+    path('featured-products/', store_views.FeaturedProductListView.as_view(), name='featured-products'),
     path('products/<slug:slug>/', store_views.ProductDetailView.as_view(), name='product-detail'),
     path('cart-view/', store_views.CartApiView.as_view(), name='cart-view'),
     path('cart-list/<str:cart_id>/', store_views.CartListView.as_view(), name='cart-list'),
@@ -49,5 +52,8 @@ urlpatterns = [
     path('customer/wishlist/<user_id>/', customer_views.WishlistAPIView.as_view(), name='customer-wishlist'),
     path('customer/notification/<user_id>/', customer_views.CustomerNotificationView.as_view(), name='customer-notification'),
     path('customer/setting/<int:pk>/', customer_views.CustomerUpdateView.as_view(), name='customer-settings'),
+
+    # Vendor API Endpoints
+    path('vendor-register/', vendor_views.VendorRegister.as_view(), name='vendor-register')
 
 ]
