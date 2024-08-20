@@ -15,6 +15,8 @@ import CartID from './views/plugin/CartID';
 import apiInstance from './utils/axios';
 import { CartContext } from './views/plugin/Context';
 import Products from './views/shop/Products';
+import StoreHeader from './views/base/StoreHeader';
+import StoreFooter from './views/base/StoreFooter';
 
 function App() {
   const [cartCount, setCartCount] = useState();
@@ -30,6 +32,7 @@ function App() {
   return (
     <CartContext.Provider value={[cartCount, setCartCount]}>
       <BrowserRouter>
+        <StoreHeader />
         <MainWrapper>
           <Routes>
             <Route path='/login' element={<Login />} />
@@ -40,6 +43,7 @@ function App() {
             <Route path='/create-new-password' element={<CreatePassword />} />
           </Routes>
         </MainWrapper>
+        <StoreFooter />
       </BrowserRouter>
     </CartContext.Provider>
   );
