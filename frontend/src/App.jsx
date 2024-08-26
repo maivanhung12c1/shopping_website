@@ -17,6 +17,7 @@ import { CartContext } from './views/plugin/Context';
 import Products from './views/shop/Products';
 import StoreHeader from './views/base/StoreHeader';
 import StoreFooter from './views/base/StoreFooter';
+import ProductDetail from './views/shop/ProductDetail';
 
 function App() {
   const [cartCount, setCartCount] = useState();
@@ -41,6 +42,10 @@ function App() {
             <Route path='/logout' element={<Logout />} />
             <Route path='/forgot-password' element={<ForgotPassword />} />
             <Route path='/create-new-password' element={<CreatePassword />} />
+
+            {/* Store Routes */}
+            <Route path='/detail/:slug' element={<ProductDetail />} />
+
           </Routes>
         </MainWrapper>
         <StoreFooter />

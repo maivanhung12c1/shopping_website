@@ -231,7 +231,7 @@ function Products() {
                                                                 {/* Size */}
                                                                 {product?.size && product?.size.length > 0 && (
                                                                     <div className='d-flex flex-column'>
-                                                                        <li className='p-1'><b>Size</b>: {selectedSize[product_id] || 'Chọn Size'}
+                                                                        <li className='p-1'><b>Size</b>: {selectedSize[product.id] || 'Chọn Size'}
 
                                                                         </li>
                                                                         <div className='p-1 mt-0 pt-0 d-flex flex-wrap'>

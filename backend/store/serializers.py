@@ -95,14 +95,15 @@ class ProductSerializer(serializers.ModelSerializer):
             "get_precentage",
         ]
     
-    def __init__(self, instance=None, data=..., **kwargs):
-        super(ProductSerializer, self).__init__(instance, data, **kwargs)
-        # Customise serialization depth based on the request method.
+    def __init__(self, *args, **kwargs):
+        super(ProductSerializer, self).__init__(*args, **kwargs)
+        # Customize serialization depth based on the request method.
         request = self.context.get('request')
         if request and request.method == 'POST':
-            # When creating a neew product, set serialization depth to 0
+            # When creating a new product, set serialization depth to 0.
             self.Meta.depth = 0
         else:
+            # For other methods, set serialization depth to 3.
             self.Meta.depth = 3
 
 class ProductFaqSerializer(serializers.ModelSerializer):
