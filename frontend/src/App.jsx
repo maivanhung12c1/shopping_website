@@ -18,6 +18,8 @@ import Products from './views/shop/Products';
 import StoreHeader from './views/base/StoreHeader';
 import StoreFooter from './views/base/StoreFooter';
 import ProductDetail from './views/shop/ProductDetail';
+import Cart from './views/shop/Cart';
+import Checkout from './views/shop/Checkout';
 
 function App() {
   const [cartCount, setCartCount] = useState();
@@ -45,6 +47,8 @@ function App() {
 
             {/* Store Routes */}
             <Route path='/detail/:slug' element={<ProductDetail />} />
+            <Route path='/cart/' element={<Cart />} />
+            <Route path="/checkout/:order_oid" element={<Checkout/>} />
 
           </Routes>
         </MainWrapper>

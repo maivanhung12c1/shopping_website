@@ -20,7 +20,7 @@ function StoreHeader() {
         setSearch(e.target.value);
     };
 
-    const handleSearchSubmit = () => {
+    const handleSearchSubmit = (e) => {
         navigate(`/search?query=${search}`);
     };
 
@@ -28,7 +28,7 @@ function StoreHeader() {
         <div>
             <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div className="container">
-                    <Link className="navbar-brand" to='/'>Mai Van Hung</Link>
+                    <Link className="navbar-brand" to='/'>Shop</Link>
                     <button>
                         <span className="navbar-toggler-icon" />
                     </button>

@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_list_or_404, redirect
+from django.shortcuts import render, get_list_or_404, redirect, get_object_or_404
 from django.http import JsonResponse, HttpResponseNotFound, HttpResponse
 from django.views import View
 from django.utils.decorators import method_decorator
@@ -90,7 +90,7 @@ class CartApiView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         payload = request.data
 
-        product_id = payload['product']
+        product_id = payload['product_id']
         user_id = payload['user_id']
         qty = payload['qty']
         price = payload['price']
@@ -99,7 +99,6 @@ class CartApiView(generics.ListCreateAPIView):
         size = payload['size']
         color = payload['color']
         cart_id = payload['cart_id']
-
         product = Product.objects.filter(status="published", id=product_id).first()
         if user_id != "undefined":
             user = User.objects.filter(id=user_id).first()
@@ -124,7 +123,7 @@ class CartApiView(generics.ListCreateAPIView):
             cart.tax_fee = int(qty) * Decimal(tax_rate)
             cart.color = color
             cart.country = country
-            cart.card_id = cart_id
+            cart.cart_id = cart_id
 
             config_settings = ConfigSettings.objects.first()
 
@@ -140,7 +139,7 @@ class CartApiView(generics.ListCreateAPIView):
             return Response({"message": "Cart updated successfully"}, status=status.HTTP_200_OK)
         else:
             cart = Cart()
-            cart.product = product()
+            cart.product = product
             cart.user = user
             cart.qty = qty
             cart.price = price
@@ -150,8 +149,7 @@ class CartApiView(generics.ListCreateAPIView):
             cart.tax_fee = int(qty) * Decimal(tax_rate)
             cart.color = color
             cart.country = country
-            cart.card_id = cart_id
-
+            cart.cart_id = cart_id
             config_settings = ConfigSettings.objects.first()
 
             if config_settings.service_fee_charge_type == "percentage":
@@ -162,7 +160,6 @@ class CartApiView(generics.ListCreateAPIView):
 
             cart.total = cart.sub_total + cart.shipping_amount + cart.service_fee + cart.tax_fee
             cart.save()
-
             return Response({"message": "Cart created successfully"}, status=status.HTTP_200_OK)
         
 class CartListView(generics.ListAPIView):
@@ -269,10 +266,10 @@ class CartItemDeleteView(generics.DestroyAPIView):
         user_id = self.kwargs.get('user_id')
 
         if user_id is not None:
-            user = get_list_or_404(User, id=user_id)
-            cart = get_list_or_404(Cart, cart_id=cart_id, id=item_id, user=user)
+            user = get_object_or_404(User, id=user_id)
+            cart = get_object_or_404(Cart, cart_id=cart_id, id=item_id, user=user)
         else:
-            cart = get_list_or_404(Cart, cart_id=cart_id, id=item_id)
+            cart = get_object_or_404(Cart, cart_id=cart_id, id=item_id)
 
         return cart
     

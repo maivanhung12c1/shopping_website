@@ -44,6 +44,7 @@ function ProductDetail() {
     const addon = Addon();
     const currentAddress = GetCurrentAddress();
     const userData = UserData();
+    console.log(`USEr ID ${userData?.user_id}`)
     let cart_id = CartID();
 
     useEffect(() => {
@@ -87,29 +88,50 @@ function ProductDetail() {
         setQtyValue(e.target.value);
     };
 
+    // const handleAddToCart = async () => {
+    //     try {
+    //         await AddToCart(product.id, 
+    //                         userData?.user_id,
+    //                         qtyValue, product.price,
+    //                         product.shipping_amount,
+    //                         currentAddress.country,
+    //                         sizeValue,
+    //                         colorValue,
+    //                         cart_id,
+    //                         setIsAddingToCart
+    //                     );
+    //         const url = userData?.user_id ? `cart-view/${cart_id}/${userData?.user_id}/` : `cart-list/${cart_id}/`;
+    //         const response = await axios.post(url);
+    //         setCartCount(response.data.length);
+    //         Swal.fire({
+    //             icon: 'success',
+    //             title: 'Đã thêm vào giỏ hàng'
+    //         });
+    //     } catch (error) {
+    //         console.error('Error adding to cart: ', error);
+    //     };
+    // };
+
     const handleAddToCart = async () => {
         try {
-            await AddToCart(product.id, 
-                            userData?.user_id,
-                            qtyValue, product.price,
-                            product.shipping_amount,
-                            currentAddress.country,
-                            sizeValue,
-                            colorValue,
-                            cart_id,
-                            setIsAddingToCart
-                        );
-            const url = userData?.user_id ? `cart-list/${cart_id}/${userData?.user_id}/` : `cart-list/${cart_id}`;
-            const response = await axios.get(url);
-            setCartCount(response.data.length);
-            Swal.fire({
-                icon: 'success',
-                title: 'Đã thêm vào giỏ hàng'
-            });
+            const formData = new FormData();
+            formData.append('product_id', product.id);
+            formData.append('user_id', userData?.user_id);
+            formData.append('qty', qtyValue);
+            formData.append('price', product.price);
+            formData.append('shipping_amount', product.shipping_amount);
+            formData.append('country', currentAddress.country);
+            formData.append('size', sizeValue);
+            formData.append('color', colorValue);
+            formData.append('cart_id', cart_id);
+
+            const response = await axios.post(`cart-view/`, formData);
+            console.log(`USEr ID ${userData?.user_id}`)
+
         } catch (error) {
-            console.error('Error adding to cart: ', error);
-        };
-    };
+            console.log(error)
+        }
+    }
 
     const handleAddToWishList = () => {
         if(userData) {
