@@ -353,7 +353,7 @@ class CreateOrderView(generics.CreateAPIView):
 
             order.save()
 
-        return Response({'message': 'Order created susscessfully', 'order_id': order.oid}, status=status.HTTP_201_CREATED)
+        return Response({'message': 'Order created susscessfully', 'order_oid': order.oid}, status=status.HTTP_201_CREATED)
     
 class CheckoutView(generics.RetrieveAPIView):
     serializer_class = CartOrderSerializer
@@ -361,7 +361,7 @@ class CheckoutView(generics.RetrieveAPIView):
 
     def get_object(self):
         order_oid = self.kwargs['order_oid']
-        cart = get_list_or_404(CartOrder, oid=order_oid)
+        cart = get_object_or_404(CartOrder, oid=order_oid)
         return cart
     
 class CouponApiView(generics.CreateAPIView):
@@ -409,7 +409,8 @@ class StripeCheckoutView(generics.CreateAPIView):
 
         if not order:
             return Response({'error': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
-        
+
+
         try:
             checkout_session = stripe.checkout.Session.create(
                 customer_email=order.email,
@@ -427,16 +428,56 @@ class StripeCheckoutView(generics.CreateAPIView):
                     }
                 ],
                 mode='payment',
+                # success_url = f"{settings.SITE_URL}/payment-success/{{order.oid}}/?session_id={{CHECKOUT_SESSION_ID}}",
+                # cancel_url = f"{settings.SITE_URL}/payment-success/{{order.oid}}/?session_id={{CHECKOUT_SESSION_ID}}",
+
                 success_url=settings.SITE_URL + '/payment-success/' + order.oid + '?session_id={CHECKOUT_SESSION_ID}',
-                canceel_url = settings.SITE_URL + '/?session_id={CHECKOUT_SESSION_ID}',
+                cancel_url=settings.SITE_URL+'/?session_id={CHECKOUT_SESSION_ID}',
             )
-            order.stripe_session_id = checkout_session.id
+            order.stripe_session_id = checkout_session.id 
             order.save()
 
             return redirect(checkout_session.url)
-        
         except stripe.error.StripeError as e:
-            return Response({'error': f'Something went wrong when creating stripe checkout session: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+            return Response( {'error': f'Something went wrong when creating stripe checkout session: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# class StripeCheckoutView(generics.CreateAPIView):
+#     serializer_class = CartOrderSerializer
+
+#     def create(self, request, *args, **kwargs):
+#         order_oid = self.kwargs['order_oid']
+#         order = CartOrder.objects.filter(oid=order_oid).first()
+
+#         if not order:
+#             return Response({'error': 'Order not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+#         try:
+#             checkout_session = stripe.checkout.Session.create(
+#                 customer_email=order.email,
+#                 payment_method_types=['card'],
+#                 line_items=[
+#                     {
+#                         'price_data': {
+#                             'currency': 'usd',
+#                             'product_data': {
+#                                 'name': order.full_name,
+#                             },
+#                             'unit_amount': int(order.total * 100),
+#                         },
+#                         'quantity': 1,
+#                     }
+#                 ],
+#                 mode='payment',
+#                 success_url=settings.SITE_URL + '/payment-success/' + order.oid + '?session_id={CHECKOUT_SESSION_ID}',
+#                 canceel_url = settings.SITE_URL + '/?session_id={CHECKOUT_SESSION_ID}',
+#             )
+#             order.stripe_session_id = checkout_session.id
+#             order.save()
+
+#             return redirect(checkout_session.url)
+        
+#         except stripe.error.StripeError as e:
+#             return Response({'error': f'Something went wrong when creating stripe checkout session: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class PaymentSuccessView(generics.CreateAPIView):
     serializer_class = CartOrderSerializer

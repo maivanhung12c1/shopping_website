@@ -155,20 +155,40 @@ class CartOrderItemSerializer(serializers.ModelSerializer):
         else:
             self.Meta.depth = 3
 
+# class CartOrderSerializer(serializers.ModelSerializer):
+#     orderitem = CartOrderItemSerializer(many=True, read_only=True)
+
+#     class Meta:
+#         model = CartOrder
+#         fields = '__all__'
+
+#     def __init__(self, instance=None, data=..., **kwargs):
+#         super(CartOrderSerializer, self).__init__(instance, data, **kwargs)
+#         request = self.context.get('request')
+#         if request and request.method == 'POST':
+#             # When creating a new cart order, set serialization depth to 0.
+#             self.Meta.depth = 0
+#         else:
+#             self.Meta.depth = 3
+
+# Define a serializer for the CartOrder model
 class CartOrderSerializer(serializers.ModelSerializer):
+    # Serialize related CartOrderItem models
     orderitem = CartOrderItemSerializer(many=True, read_only=True)
 
     class Meta:
         model = CartOrder
         fields = '__all__'
 
-    def __init__(self, instance=None, data=..., **kwargs):
-        super(CartOrderSerializer, self).__init__(instance, data, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(CartOrderSerializer, self).__init__(*args, **kwargs)
+        # Customize serialization depth based on the request method.
         request = self.context.get('request')
         if request and request.method == 'POST':
             # When creating a new cart order, set serialization depth to 0.
             self.Meta.depth = 0
         else:
+            # For other methods, set serialization depth to 3.
             self.Meta.depth = 3
 
 class VendorSerializer(serializers.ModelSerializer):

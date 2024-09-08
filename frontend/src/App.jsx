@@ -20,6 +20,7 @@ import StoreFooter from './views/base/StoreFooter';
 import ProductDetail from './views/shop/ProductDetail';
 import Cart from './views/shop/Cart';
 import Checkout from './views/shop/Checkout';
+import PaymentSuccess from './views/shop/PaymentSuccess';
 
 function App() {
   const [cartCount, setCartCount] = useState();
@@ -49,6 +50,7 @@ function App() {
             <Route path='/detail/:slug' element={<ProductDetail />} />
             <Route path='/cart/' element={<Cart />} />
             <Route path="/checkout/:order_oid" element={<Checkout/>} />
+            <Route path="/payment-success/:order_oid/" element={<PaymentSuccess />} />
 
           </Routes>
         </MainWrapper>

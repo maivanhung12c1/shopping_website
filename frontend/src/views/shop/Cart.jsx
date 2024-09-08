@@ -185,7 +185,8 @@ function Cart() {
             formData.append('user_id', userData ? userData?.user_id : 0);
 
             const response = await axios.post('create-order/', formData);
-            navigate(`/checkout/${response.data.order_oid}`);
+            console.log(`response : :: ${response.data.order_oid}`);
+            navigate(`/checkout/${response.data.order_oid}/`);
 
         } catch (error) {
             console.log(error);

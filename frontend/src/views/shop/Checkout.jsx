@@ -21,7 +21,7 @@ function Checkout() {
     let cart_id = CartID();
     const param = useParams();
     let navigate = useNavigate();
-
+    console.log(`param ${param?.order_oid}`);
     useEffect(() => {
         axios.get(`checkout/${param?.order_oid}/`).then((res) => {
             setOrder(res.data);
