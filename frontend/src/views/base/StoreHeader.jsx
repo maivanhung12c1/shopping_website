@@ -75,7 +75,7 @@ function StoreHeader() {
                             </>
                             :
                             <>
-                                <Link className="btn btn-primary me-2" to='/login'>Đăng nhập</Link>
+                                <Link className="btn btn-primary me-2" to={'/login'}>Đăng nhập</Link>
                                 <Link className="btn btn-primary me-2" to='/register'>Đăng ký</Link>
                             </>
                         }

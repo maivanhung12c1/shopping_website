@@ -21,6 +21,16 @@ import ProductDetail from './views/shop/ProductDetail';
 import Cart from './views/shop/Cart';
 import Checkout from './views/shop/Checkout';
 import PaymentSuccess from './views/shop/PaymentSuccess';
+import Invoice from './views/shop/Invoice';
+import Search from './views/shop/Search';
+import Account from './views/customer/Account';
+import Orders from './views/customer/Orders';
+import OrderDetail from './views/customer/OrderDetail';
+import Wishlist from './views/customer/Wishlist';
+import Notifications from './views/customer/Notifications';
+import Settings from './views/customer/Settings';
+import PrivateRoute from './layout/PrivateRoute';
+
 
 function App() {
   const [cartCount, setCartCount] = useState();
@@ -51,6 +61,16 @@ function App() {
             <Route path='/cart/' element={<Cart />} />
             <Route path="/checkout/:order_oid" element={<Checkout/>} />
             <Route path="/payment-success/:order_oid/" element={<PaymentSuccess />} />
+            <Route path="/invoice/:order_oid/" element={<Invoice />} />
+            <Route path="/search" element={<Search />} />
+
+            {/* Customer Routes */}
+            <Route path="/customer/account/" element={<PrivateRoute><Account /></PrivateRoute>} />
+            <Route path="/customer/orders/" element={<PrivateRoute><Orders /></PrivateRoute>} />
+            <Route path="/customer/order/detail/:order_oid/" element={<PrivateRoute><OrderDetail /></PrivateRoute>} />
+            <Route path="/customer/wishlist/" element={<PrivateRoute><Wishlist /></PrivateRoute>} />
+            <Route path="/customer/notifications/" element={<PrivateRoute><Notifications /></PrivateRoute>} />
+            <Route path="/customer/settings/" element={<PrivateRoute><Settings /></PrivateRoute>} />
 
           </Routes>
         </MainWrapper>
