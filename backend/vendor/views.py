@@ -281,7 +281,7 @@ class ProductUpdateAPIView(generics.RetrieveUpdateAPIView):
         serializer.save(product=product_instance)
 
 class ProductDeleteAPIView(generics.DestroyAPIView):
-    queryset = Product.object.all()
+    queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = (AllowAny, )
 

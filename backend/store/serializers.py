@@ -321,20 +321,20 @@ class NotificationSerializer(serializers.ModelSerializer):
         else:
             self.Meta.depth = 3
 
-class SummarySerializer(serializers.ModelSerializer):
+class SummarySerializer(serializers.Serializer):
     product = serializers.IntegerField()
     orders = serializers.IntegerField()
     revenue = serializers.DecimalField(max_digits=10, decimal_places=2)
 
-class EarningSummarySerializer(serializers.ModelSerializer):
+class EarningSummarySerializer(serializers.Serializer):
     monthly_total = serializers.DecimalField(max_digits=10, decimal_places=2)
     monthly_revenue = serializers.DecimalField(max_digits=10, decimal_places=2)
 
-class CouponSummarySerializer(serializers.ModelSerializer):
+class CouponSummarySerializer(serializers.Serializer):
     total_coupons = serializers.IntegerField(default=0)
     active_coupons = serializers.IntegerField(default=0)
 
-class NotificationSummarySerializer(serializers.ModelSerializer):
+class NotificationSummarySerializer(serializers.Serializer):
     read_noti = serializers.IntegerField(default=0)
     all_noti = serializers.IntegerField(default=0)
     un_read_noti = serializers.IntegerField(default=0)
