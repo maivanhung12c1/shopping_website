@@ -76,7 +76,7 @@ def testEndPoint(request):
     # If the request method is neither GET or POST, it return a response with an error message and an HTTP 400
     return Response("Invalid JSON data", status=status.HTTP_400_BAD_REQUEST)
 
-class ProfileView(generics.RetrieveAPIView):
+class ProfileView(generics.RetrieveUpdateAPIView):
     permission_classes = (AllowAny,)
     serializer_class = ProfileSerilizer
 

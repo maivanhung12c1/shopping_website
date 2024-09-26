@@ -84,7 +84,7 @@ function Settings() {
         formData.append('address', profileData.address);
 
         try {
-            await apiInstance.patch(`customer/setting/${userData?.user_id}/`, formData, {
+            await apiInstance.patch(`user/profile/${userData?.user_id}/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 },

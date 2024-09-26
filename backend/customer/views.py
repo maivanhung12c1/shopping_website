@@ -86,3 +86,7 @@ class CustomerUpdateView(generics.RetrieveAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerilizer
     permission_classes = (AllowAny,)
+
+    def get_object(self):
+        print(self.request.pk)
+        return super().get_object()
