@@ -14,7 +14,7 @@ function VendorRegister() {
         description: '',
         mobile: ''
     });
-
+    console.log(`userData?.vendor_id ${JSON.stringify(UserData())}`)
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
@@ -25,6 +25,13 @@ function VendorRegister() {
         });
 
     }
+
+    const handleFileChange = (event) => {
+        setVendor({
+            ...vendor,
+            [event.target.name]: event.target.files[0]
+        });
+    };
 
     const config = {
         headers: {
@@ -42,7 +49,7 @@ function VendorRegister() {
         formData.append('email', vendor.email);
         formData.append('description', vendor.description);
         formData.append('mobile', vendor.mobile);
-        formData.append('user_id', UserData?.user_id);
+        formData.append('user_id', UserData()?.user_id);
 
         await apiInstance.post(`vendor-register/`, formData, config).then((res) => {
             if(res.data.message == "Created vendor account") {

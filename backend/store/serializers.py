@@ -198,8 +198,8 @@ class VendorSerializer(serializers.ModelSerializer):
         model = Vendor
         fields = '__all__'
 
-    def __init__(self, instance=None, data=..., **kwargs):
-        super(VendorSerializer, self).__init__(instance, data, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super(VendorSerializer, self).__init__(*args, **kwargs)
         request = self.context.get('request')
         if request and request.method == 'POST':
             # When creating a new vendor, set serialization depth to 0.
@@ -322,7 +322,7 @@ class NotificationSerializer(serializers.ModelSerializer):
             self.Meta.depth = 3
 
 class SummarySerializer(serializers.Serializer):
-    product = serializers.IntegerField()
+    products = serializers.IntegerField()
     orders = serializers.IntegerField()
     revenue = serializers.DecimalField(max_digits=10, decimal_places=2)
 

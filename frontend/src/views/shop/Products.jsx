@@ -107,7 +107,7 @@ function Products() {
         }));
 
         try {
-            await addToCart(product_id, userData?.user_id, qtyValue, price, shipping_amount, currentAddress.country, colorValue, sizeValue, cart_id, setIsAddingToCart);
+            await AddToCart(product_id, userData?.user_id, qtyValue, price, shipping_amount, currentAddress.country, colorValue, sizeValue, cart_id, setIsAddingToCart);
             
             // After a successfull operation, set the loading state to false
             setLoadingStates((prevStates) => ({

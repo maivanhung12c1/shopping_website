@@ -7,6 +7,8 @@ from django.db.models import Max
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.utils.text import slugify
 import shortuuid
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 
 
@@ -99,7 +101,13 @@ class Vendor(models.Model):
             self.slug = slugify(self.name)
         super(Vendor, self).save(*args, **kwargs)
 
-
+@receiver(post_save, sender=Vendor)
+def update_user_vendor_id(sender, instance, created, **kwargs):
+    if created:
+        user = instance.user
+        if user:
+            user.vendor_id = instance.id
+            user.save()
 
 
 

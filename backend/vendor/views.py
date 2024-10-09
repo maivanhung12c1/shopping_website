@@ -23,7 +23,7 @@ from store.serializers import (
     )
 
 # Models
-from userauths.models import Profile
+from userauths.models import Profile, User
 from store.models import Notification, CartOrderItem, Product, DeliveryCouriers, CartOrder, Review, Coupon
 from vendor.models import Vendor
 
@@ -550,21 +550,25 @@ class VendorRegister(generics.CreateAPIView):
 
     def create(self, request, *args, **kwargs):
         payload = request.data
-        
+        print(" payload['image'] ", payload['image'] )
+        print(" payload['name'] ", payload['name'] )
+        print(" payload['email'] ", payload['email'] )
+        print(" payload['mobile'] ", payload['mobile'] )
+        print(" payload['user_id'] ", payload['user_id'] )
         image = payload['image']
         name = payload['name']
         email = payload['email']
         description = payload['description']
         mobile = payload['mobile']
         user_id = payload['user_id']
-
+        user = User.objects.get(id=user_id)
         Vendor.objects.create(
             image=image,
             name=name,
             email=email,
             description=description,
             mobile=mobile,
-            user_id=user_id,
+            user=user,
         )
         return Response({'message': 'Created vendor account'})
     

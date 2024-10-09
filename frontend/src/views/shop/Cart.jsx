@@ -102,7 +102,7 @@ function Cart() {
                             cart_id,
                             isAddingToCart
                         );
-            // Fetch the latest cart data after addToCart is completed
+            // Fetch the latest cart data after AddToCart is completed
             fetchCartData(cart_id, userData?.user_id);
             fetchCartTotal(cart_id, userData?.user_id);
 
